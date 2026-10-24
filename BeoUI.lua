@@ -582,11 +582,11 @@ function Window:Tab(name, icon)
         end
 
         function Tab:SkillRow(keys, getFn, setFn)
-            -- keys: {"Z","X","C","V"}  getFn(key)->bool  setFn(key, bool)
+            -- One horizontal row of skill buttons (Z X C V)
             keys = keys or { "Z", "X", "C", "V" }
             builders[#builders + 1] = function(parent)
                 local r = N("Frame", {
-                    Size = UDim2.new(1, -4, 0, 36),
+                    Size = UDim2.new(1, -4, 0, 40),
                     BackgroundColor3 = Theme.Card,
                     BorderSizePixel = 0,
                     LayoutOrder = nextOrder(),
@@ -595,26 +595,34 @@ function Window:Tab(name, icon)
                 Corner(r, 10)
                 Stroke(r, Color3.fromRGB(40, 50, 70), 1, 0.65)
 
-                local n = #keys
-                local gap = 6
-                local sidePad = 10
-                -- compute button width after parent lays out; use fixed for mobile
-                local btnW = 50
-                local totalW = n * btnW + (n - 1) * gap
-                local startX = sidePad
+                local row = N("Frame", {
+                    Size = UDim2.new(1, -16, 1, -10),
+                    Position = UDim2.new(0, 8, 0, 5),
+                    BackgroundTransparency = 1,
+                    ZIndex = 8,
+                }, r)
+                local list = N("UIListLayout", {
+                    FillDirection = Enum.FillDirection.Horizontal,
+                    HorizontalAlignment = Enum.HorizontalAlignment.Center,
+                    VerticalAlignment = Enum.VerticalAlignment.Center,
+                    Padding = UDim.new(0, 6),
+                    SortOrder = Enum.SortOrder.LayoutOrder,
+                }, row)
 
                 for i, k in ipairs(keys) do
                     local btn = N("TextButton", {
-                        Size = UDim2.fromOffset(btnW, 26),
-                        Position = UDim2.new(0, startX + (i - 1) * (btnW + gap), 0.5, -13),
+                        Size = UDim2.fromOffset(58, 28),
+                        BackgroundColor3 = Color3.fromRGB(38, 44, 58),
                         BorderSizePixel = 0,
                         Font = Enum.Font.GothamBold,
-                        TextSize = 12,
+                        TextSize = 11,
                         AutoButtonColor = false,
-                        ZIndex = 8,
-                        Text = k,
-                    }, r)
-                    Corner(btn, 7)
+                        ZIndex = 9,
+                        Text = k .. " OFF",
+                        TextColor3 = Theme.Muted,
+                        LayoutOrder = i,
+                    }, row)
+                    Corner(btn, 8)
 
                     local function paint()
                         local on = false
